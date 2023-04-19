@@ -11,7 +11,8 @@ import WaterIcon from '@mui/icons-material/Water';
 import AirIcon from '@mui/icons-material/Air';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-
+import SearchIcon from '@mui/icons-material/Search';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const WeatherForecast = () => {
   const [city, setCity] = useState("hyderabad");
@@ -29,14 +30,8 @@ const WeatherForecast = () => {
   const fetchWeatherForecast = () => {
     setIsLoading(true);
     fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`)
-      .then((response) => {if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json()})
+      .then((response) => response.json())
       .then((data) => {
-        if (!data || !data.list || data.list.length === 0) {
-          throw new Error("Invalid API response");
-        }
         setForecast(data.list);
         setIsLoading(false);
       })
@@ -66,23 +61,39 @@ const WeatherForecast = () => {
     }
     return dates;
   };
+  function refreshPage() {
+    window.location.reload(false);
+  }
 
   return (
+    <div className="background-wallpaper">
     <div className="forecast-forecast-container">
       
       <form onSubmit={handleSubmit}>
-        <h1 >Forecast for {city}</h1> 
+        <h1 >Forecast for {city.toUpperCase()}</h1> 
+        <Button 
+          type="click" 
+          onclick={refreshPage} 
+          variant="outlined" 
+          color="secondary"
+          style={{marginRight:"10px"}}> <RefreshIcon/> </Button>
         <TextField
           required
           id="outlined-basic" 
           label="Enter City Name" 
+          size="small"
           value={city}
           onChange={(e) => setCity(e.target.value)}
           variant="outlined"
           />
-        <Button type="submit" className="search" size="large" color="primary" variant="contained" >
-          Search
-        </Button>
+         
+        <Button 
+          type="submit" 
+          className="search" 
+          size="large" 
+          color="secondary" 
+          variant="outlined"  
+          style={{marginLeft:"10px"}}> <SearchIcon/> </Button>
 
       </form>
 
@@ -124,6 +135,7 @@ const WeatherForecast = () => {
           )}
         </div>
       )}
+    </div>
     </div>
 )}
 

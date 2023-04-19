@@ -1,15 +1,25 @@
+.background-wallpaper{
+  background-image: url('https://free4kwallpapers.com/uploads/wallpaper/weather-live-wallpaper-icon-1024x768-wallpaper.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  
+  width: 100%;
+  height: 720px;
+}
+
 .forecast-forecast-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
-    margin: 50px;
-    background-color: rgb(247, 250, 250);
+    /* padding: 10px; */
+    /* margin: 50px; */
+    
     width: auto;
-    margin: 5%;
+    margin: 3%; 
 }
   .forecast-search-container {
-    margin: 10%;
+    margin: 5%;
     color: red;
     background-color: wheat;
   }
@@ -37,7 +47,7 @@
     text-align: left;
     color: rgb(2, 16, 74);
     font-style: oblique;
-    background-color:rgba(201, 224, 236, 0.774);
+    background-color:rgba(201, 224, 236, 0.315);
     border-radius: 15px;
     width: 200px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
