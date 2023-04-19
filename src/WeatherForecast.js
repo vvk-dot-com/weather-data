@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import './WeatherForecast.css'
+import { API_KEY } from "./config";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import { Button, TextField, CircularProgress } from "@mui/material";
+import ThermostatIcon from '@mui/icons-material/Thermostat';
+import WaterIcon from '@mui/icons-material/Water';
+import AirIcon from '@mui/icons-material/Air';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; 
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
-const API_KEY = "2c2995961e879ea7fe8d67371fa19ced";
 
 const WeatherForecast = () => {
   const [city, setCity] = useState("hyderabad");
@@ -12,30 +22,39 @@ const WeatherForecast = () => {
     e.preventDefault();
     setIsLoading(true);
     setTimeout(() => {
-       fetchWeatherForecast();
-    }, 5000);
-    
+      fetchWeatherForecast();
+    }, 3000); //3000ms
   };
 
   const fetchWeatherForecast = () => {
+    setIsLoading(true);
     fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`)
-      .then((response) => response.json())
+      .then((response) => {if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json()})
       .then((data) => {
-                setForecast(data.list);
-                setIsLoading(false);
-              })
+        if (!data || !data.list || data.list.length === 0) {
+          throw new Error("Invalid API response");
+        }
+        setForecast(data.list);
+        setIsLoading(false);
+      })
       .catch((error) => console.log(error));
   };
+ 
 
   useEffect(() => {
     fetchWeatherForecast();
-  });
-
+  }, []);
+  
   const getCurrentTime = () => {
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
-    return `${hours}:${minutes}`;
+    // return `${hours}:${minutes}`; // to get time 24hr format
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    return `${time}` //to get time 12hr format
   };
 
   const generateDates = () => {
@@ -49,61 +68,63 @@ const WeatherForecast = () => {
   };
 
   return (
-  <div className="forecast-forecast-container">
-    
-    {!forecast && (
-      <div className="forecast-search-container">
-          <form onSubmit={handleSubmit}>
-              <h1 className="heading">Weather Forecast</h1>
-              <input type="text"  className="input" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-              <button  type="submit" className="search">Search</button>
-              
-          </form>
-          {
-            <strong>Please Enter city name</strong>
-          }
-      </div>
+    <div className="forecast-forecast-container">
       
-    ) }
-   
+      <form onSubmit={handleSubmit}>
+        <h1 >Forecast for {city}</h1> 
+        <TextField
+          required
+          id="outlined-basic" 
+          label="Enter City Name" 
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          variant="outlined"
+          />
+        <Button type="submit" className="search" size="large" color="primary" variant="contained" >
+          Search
+        </Button>
 
-    {forecast && (
-      <div className="forecast-data-container">
-      
-          <form onSubmit={handleSubmit}>
-            
-            <h1 className="heading">Weather Forecast</h1>
-            <input type="text"  className="input" id="city" placeholder="City" name="city" value={city} onChange={(e) => setCity(e.target.value)} />
-            <button className="search" type="submit">Search</button>
-            
-          
-          </form>
-          
-          {isLoading ? (
-               <p>Please wait...</p>
-            ) :
-            
+      </form>
+
+      {!forecast  &&  (
+        <div className="forecast-search-container">
+          <h1>Please Refresh the page and Enter valid city name</h1>
+        </div>
+      )}
+
+      {forecast  && (
+        <div className="forecast-data-container">
+          {isLoading ? 
+          (
+            <h2 style={{alignItems:"center"}}> <CircularProgress /> Please wait...</h2>
+          ) :  (
             <div className="forecast-items-container">
-            
-            { forecast.map((item) =>  {
-              const date = new Date(item.dt_txt);
-              if (date.getHours() === 12 && generateDates().includes(date.toDateString())) {
-                      return (
-                        <div key={item.dt} className="forecast-item">
-                              <h4 className="date">{date.toDateString()}, {getCurrentTime()}</h4>
-                              <h4 className='a'> {item.weather[0].description} <img src={`http://openweathermap.org/img/w/${item.weather[0].icon}.png`} alt={item.weather[0].description} /> </h4>     
-                              <h4 className='b'>Temperature: {item.main.temp} °C</h4>
-                              <h4 className='b'>Humidity: {item.main.humidity}%</h4>
-                              <h4 className='b'>Wind Speed: {item.wind.speed} km/h</h4>
-                          <br></br>      
-                        </div>
-                      );
-              } })
-            }
-          </div>
-          }
-      </div> 
-    )}
-  </div>
-  )};
+              {forecast.map((item) => {
+                const date = new Date(item.dt_txt);
+                if (
+                  date.getHours() === 21 &&
+                  generateDates().includes(date.toDateString())
+                ) {
+                  return (
+                    <div key={item.dt} className="forecast-item">
+                      <p> <CalendarTodayIcon/> {date.toDateString()} </p>
+                      <p style={{fontSize:"large"}}> <AccessTimeIcon/> {getCurrentTime()} </p>
+                      <p> {item.weather[0].description}
+                              <img src={`http://openweathermap.org/img/w/${item.weather[0].icon}.png`}
+                              alt={item.weather[0].description} /></p>
+                      <p style={{fontSize:"large", color:"black"}}> <ThermostatIcon/>  {item.main.temp} °C </p>
+                      <p style={{fontSize:"large", color:"black"}}> <WaterIcon/> {item.main.humidity}% </p>
+                      <p style={{fontSize:"large", color:"black"}}> <AirIcon/> {item.wind.speed} km/h </p>
+                      
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+)}
+
 export default WeatherForecast;
