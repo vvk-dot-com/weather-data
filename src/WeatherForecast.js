@@ -14,6 +14,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+
+
 const WeatherForecast = () => {
   const [city, setCity] = useState("hyderabad");
   const [forecast, setForecast] = useState([]);
@@ -29,7 +31,7 @@ const WeatherForecast = () => {
 
   const fetchWeatherForecast = () => {
     setIsLoading(true);
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`)
+    fetch(`https://api.openweathermap.org/data/2.5/forecast/?q=${city}&appid=${API_KEY}&units=metric`)
       .then((response) => response.json())
       .then((data) => {
         setForecast(data.list);
@@ -38,7 +40,6 @@ const WeatherForecast = () => {
       .catch((error) => console.log(error));
   };
  
-
   useEffect(() => {
     fetchWeatherForecast();
   }, []);
@@ -54,7 +55,7 @@ const WeatherForecast = () => {
 
   const generateDates = () => {
     const dates = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       dates.push(date.toDateString());
