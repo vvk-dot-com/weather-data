@@ -2,6 +2,16 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## steps to follow after clone
+### `npm install`
+
+### `npm install @mui/material @emotion/react @emotion/styled`
+It will install the Material UI features.
+
+### `npm install @fontsource/roboto`
+it will install the roboto font instantly.
+
+
 ## Available Scripts
 
 In the project directory, you can run:
